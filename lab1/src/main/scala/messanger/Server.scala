@@ -1,19 +1,20 @@
 package messanger
 
-import java.net.{ServerSocket, Socket}
+import java.net.{DatagramSocket, InetAddress, ServerSocket, Socket}
 import java.util.concurrent.{CopyOnWriteArrayList, ExecutorService, Executors}
 
 class Server {
   val ss = new ServerSocket(Server.port)
-  var clientsTCP: CopyOnWriteArrayList[ClientHandler] = new CopyOnWriteArrayList()
+  var clientsTCP: CopyOnWriteArrayList[ClientTCPHandler] = new CopyOnWriteArrayList()
   val pool: ExecutorService = Executors.newFixedThreadPool(Server.poolSize)
 
   def run(): Unit = {
     var socket: Socket = null
+    pool.execute(new ClientUDPHandler)
     while (true) {
       socket = ss.accept()
       println("Connection accepted")
-      val clientHandler = new ClientHandler(socket, this)
+      val clientHandler = new ClientTCPHandler(socket, this, socket.getInputStream)
       clientsTCP.add(clientHandler)
       pool.execute(clientHandler)
     }
@@ -23,6 +24,7 @@ class Server {
 object Server {
   val port = 1100
   val poolSize = 100
+  val address = InetAddress.getByName("localhost");
 
   def main(args: Array[String]): Unit = {
     new Server().run()

@@ -1,20 +1,35 @@
 package messanger
 
-import java.io.{ObjectOutputStream, OutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectOutputStream, OutputStream}
+import java.net.{DatagramPacket, DatagramSocket}
 import java.util.Scanner
 
 import messanger.messages.Message
 
-class ClientSend(val outputSocketStream: OutputStream) extends Thread {
+class ClientSend(val outputSocketStream: OutputStream, val socket: DatagramSocket) extends Thread {
   val output = new ObjectOutputStream(outputSocketStream)
+  var nickname: String = null
+
+  processInput("U hello packet")
+
+  private def processInput(input: String): Unit = {
+
+    input match {
+      case s"U $rest" =>
+        val byteOut = new ByteArrayOutputStream
+        new ObjectOutputStream(byteOut).writeObject(Message(nickname, rest))
+        socket.send(new DatagramPacket(byteOut.toByteArray, byteOut.toByteArray.length, Server.address, Server.port))
+      case s"M $rest" =>
+      case mess =>
+        output.writeObject(Message(nickname, mess))
+    }
+  }
 
   override def run {
     val scn = new Scanner(System.in)
     println("Insert nickname:")
-    var nickname = scn.nextLine
-    while (true) {
-      var input = scn.nextLine
-      output.writeObject(Message(nickname, input))
-    }
+    nickname = scn.nextLine
+    while (true)
+      processInput(scn.nextLine)
   }
 }

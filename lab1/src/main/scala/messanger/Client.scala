@@ -1,28 +1,38 @@
 package messanger
 
-import java.net.{InetAddress, Socket}
+import java.net.{DatagramSocket, InetAddress, Socket}
 
 
 class Client {
-  val ip = InetAddress.getByName("localhost");
-  val s = new Socket(ip, Server.port);
 
   def run(): Unit = {
-    val cs = new ClientSend(s.getOutputStream)
-    val cr = new ClientRead(s.getInputStream)
+    var s: Socket = null
+    var ds: DatagramSocket = null
+    try {
+      val ip = InetAddress.getByName("localhost");
+      s = new Socket(ip, Server.port);
+      ds = new DatagramSocket
+      val cs = new ClientSend(s.getOutputStream, ds)
+      val cr = new Thread(new ClientReadTCP(s.getInputStream))
+      val crd = new Thread(new ClientReadUDP(ds))
 
-    cs.start; cr.start
-    cs.join; cr.join
+      cs.start;
+      cr.start;
+      crd.start
+      cs.join;
+      cr.join;
+      crd.join
+    } catch {
+      case x: java.net.ConnectException =>
+        println("Connection to server is closed")
+    } finally {
+      s.close
+    }
   }
 }
 
 object Client {
   def main(args: Array[String]): Unit = {
-    try {
-      new Client().run
-    } catch {
-      case x: java.net.ConnectException =>
-        println("Connection to server is closed")
-    }
+    new Client().run
   }
 }
