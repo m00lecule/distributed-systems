@@ -1,9 +1,10 @@
-package messanger
+package messanger.client
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectOutputStream, OutputStream}
+import java.io.{ByteArrayOutputStream, ObjectOutputStream, OutputStream}
 import java.net.{DatagramPacket, DatagramSocket}
 import java.util.Scanner
 
+import messanger.Server
 import messanger.messages.Message
 
 class ClientSend(val outputSocketStream: OutputStream, val socket: DatagramSocket) extends Thread {

@@ -1,4 +1,4 @@
-package messanger
+package messanger.udp
 
 import java.io.{ByteArrayInputStream, ObjectInputStream}
 import java.net.{DatagramPacket, DatagramSocket}

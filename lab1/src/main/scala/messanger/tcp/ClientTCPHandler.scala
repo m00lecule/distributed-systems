@@ -1,9 +1,10 @@
-package messanger
+package messanger.tcp
 
-import java.io.{EOFException, InputStream, ObjectInputStream, ObjectOutputStream}
+import java.io.{EOFException, InputStream, ObjectOutputStream}
 import java.net.Socket
 
-import messanger.messages.{LogoutMessage, Message}
+import messanger.messages.Message
+import messanger.{Processable, Server}
 
 class ClientTCPHandler(val socket: Socket, val server: Server, override val inputSocketStream: InputStream) extends Runnable with Processable with TCPRead {
 

@@ -1,6 +1,10 @@
-package messanger
+package messanger.client
 
 import java.net.{DatagramSocket, InetAddress, Socket}
+
+import messanger.tcp.ClientReadTCP
+import messanger.udp.ClientReadUDP
+import messanger.Server
 
 
 class Client {
@@ -16,12 +20,8 @@ class Client {
       val cr = new Thread(new ClientReadTCP(s.getInputStream))
       val crd = new Thread(new ClientReadUDP(ds))
 
-      cs.start;
-      cr.start;
-      crd.start
-      cs.join;
-      cr.join;
-      crd.join
+      cs.start; cr.start; crd.start
+      cs.join; cr.join; crd.join
     } catch {
       case x: java.net.ConnectException =>
         println("Connection to server is closed")

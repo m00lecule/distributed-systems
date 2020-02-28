@@ -3,6 +3,9 @@ package messanger
 import java.net.{DatagramSocket, InetAddress, ServerSocket, Socket}
 import java.util.concurrent.{CopyOnWriteArrayList, ExecutorService, Executors}
 
+import messanger.tcp.ClientTCPHandler
+import messanger.udp.ClientUDPHandler
+
 class Server {
   val ss = new ServerSocket(Server.port)
   var clientsTCP: CopyOnWriteArrayList[ClientTCPHandler] = new CopyOnWriteArrayList()

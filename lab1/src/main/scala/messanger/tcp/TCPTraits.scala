@@ -1,4 +1,4 @@
-package messanger
+package messanger.tcp
 
 import java.io.{InputStream, ObjectInputStream}
 
