@@ -3,16 +3,10 @@ package messanger.udp
 import java.io.{ByteArrayInputStream, ObjectInputStream}
 import java.net.{DatagramPacket, DatagramSocket}
 
-class UDPEndPoint(val socket: DatagramSocket) {
+trait DatagramRead {
 
   val receive = new Array[Byte](65535)
   val packet = new DatagramPacket(receive, receive.length);
-
-  def this() = this(new DatagramSocket)
-}
-
-trait UDPRead {
-  val packet: DatagramPacket
   val socket: DatagramSocket
 
   def readObject = {

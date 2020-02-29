@@ -1,26 +1,30 @@
 package messanger.client
 
 import java.io.{ByteArrayOutputStream, ObjectOutputStream, OutputStream}
-import java.net.{DatagramPacket, DatagramSocket}
+import java.net.{DatagramPacket, DatagramSocket, InetAddress, MulticastSocket}
 import java.util.Scanner
 
 import messanger.Server
 import messanger.messages.Message
 
-class ClientSend(val outputSocketStream: OutputStream, val socket: DatagramSocket) extends Thread {
+class ClientSend(val outputSocketStream: OutputStream, val socket: DatagramSocket, val multicastSocket: MulticastSocket) extends Thread {
   val output = new ObjectOutputStream(outputSocketStream)
   var nickname: String = null
 
   processInput("U hello packet")
 
-  private def processInput(input: String): Unit = {
+  private def sendUsingSocket(message: Any, socket: DatagramSocket, ip: InetAddress, port: Int): Unit = {
+    val byteOut = new ByteArrayOutputStream
+    new ObjectOutputStream(byteOut).writeObject(message)
+    socket.send(new DatagramPacket(byteOut.toByteArray, byteOut.toByteArray.length, ip, port))
+  }
 
+  private def processInput(input: String): Unit = {
     input match {
       case s"U $rest" =>
-        val byteOut = new ByteArrayOutputStream
-        new ObjectOutputStream(byteOut).writeObject(Message(nickname, rest))
-        socket.send(new DatagramPacket(byteOut.toByteArray, byteOut.toByteArray.length, Server.address, Server.port))
+        sendUsingSocket(Message(nickname, rest), socket, Server.address, Server.port)
       case s"M $rest" =>
+        sendUsingSocket(Message(nickname, rest), multicastSocket, Server.multicastAddress, 6789)
       case mess =>
         output.writeObject(Message(nickname, mess))
     }

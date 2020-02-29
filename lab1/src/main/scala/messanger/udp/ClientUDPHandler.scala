@@ -7,15 +7,11 @@ import messanger.Server
 import messanger.messages.{LogoutMessage, Message}
 
 
-class ClientUDPHandler extends Runnable {
+class ClientUDPHandler(override val socket: DatagramSocket) extends Runnable with DatagramRead {
 
   var registeredClients: scala.collection.mutable.Set[(Int, InetAddress)] = scala.collection.mutable.Set()
-  val receive = new Array[Byte](65535)
-  var ds: DatagramSocket = null;
-
 
   override def run(): Unit = {
-    ds = new DatagramSocket(Server.port)
     while (true)
       processMessages
   }
@@ -27,14 +23,12 @@ class ClientUDPHandler extends Runnable {
     registeredClients.filterNot(_ equals clientTuple).foreach {
       case (port, address) =>
         val dp = new DatagramPacket(packet.getData, packet.getLength, address, port)
-        ds.send(dp)
+        socket.send(dp)
     }
   }
 
   def processMessages(): Unit = {
-
-    val packet = new DatagramPacket(receive, receive.length);
-    ds.receive(packet)
+    socket.receive(packet)
     val received: AnyRef = new ObjectInputStream(new ByteArrayInputStream(packet.getData)).readObject()
 
     received match {

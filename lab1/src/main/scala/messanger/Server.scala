@@ -13,7 +13,7 @@ class Server {
 
   def run(): Unit = {
     var socket: Socket = null
-    pool.execute(new ClientUDPHandler)
+    pool.execute(new ClientUDPHandler(new DatagramSocket(Server.port)))
     while (true) {
       socket = ss.accept()
       println("Connection accepted")
@@ -28,6 +28,7 @@ object Server {
   val port = 1100
   val poolSize = 100
   val address = InetAddress.getByName("localhost");
+  val multicastAddress = InetAddress.getByName("224.168.1.124");
 
   def main(args: Array[String]): Unit = {
     new Server().run()
