@@ -3,8 +3,8 @@ package messanger
 import java.net.{DatagramSocket, InetAddress, ServerSocket, Socket}
 import java.util.concurrent.{CopyOnWriteArrayList, ExecutorService, Executors}
 
-import messanger.tcp.ClientTCPHandler
-import messanger.udp.ClientUDPHandler
+import messanger.stream.ClientTCPHandler
+import messanger.socket.ClientUDPHandler
 
 class Server {
   val ss = new ServerSocket(Server.port)
@@ -17,7 +17,7 @@ class Server {
     while (true) {
       socket = ss.accept()
       println("Connection accepted")
-      val clientHandler = new ClientTCPHandler(socket, this, socket.getInputStream)
+      val clientHandler = new ClientTCPHandler(socket, this)
       clientsTCP.add(clientHandler)
       pool.execute(clientHandler)
     }
@@ -29,6 +29,7 @@ object Server {
   val poolSize = 100
   val address = InetAddress.getByName("localhost");
   val multicastAddress = InetAddress.getByName("224.168.1.124");
+  val multicastPort = 6789
 
   def main(args: Array[String]): Unit = {
     new Server().run()

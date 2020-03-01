@@ -1,41 +1,24 @@
 package messanger.client
 
-import java.net.{DatagramSocket, InetAddress, MulticastSocket, Socket}
-import java.nio.channels.MulticastChannel
-
-import messanger.tcp.ClientReadTCP
-import messanger.udp.ClientReadUDP
-import messanger.Server
-import messanger.multicast.ClientReadMulticast
-
+import java.util.Scanner
+import messanger.socket.{DatagramSocketRead, MulticastSocketRead}
+import messanger.stream.TCPSocketRead
 
 class Client {
-
   def run(): Unit = {
-    var s: Socket = null
-    var ds: DatagramSocket = null
-    var ms: MulticastSocket = null
     try {
-      val ip = InetAddress.getByName("localhost");
-      s = new Socket(ip, Server.port);
-      ds = new DatagramSocket
-      ms = new MulticastSocket(6789)
-      ms.joinGroup(Server.multicastAddress)
-
-      val cs = new ClientSend(s.getOutputStream, ds, ms)
-      val cr = new Thread(new ClientReadTCP(s.getInputStream))
-      val crd = new Thread(new ClientReadUDP(ds))
-      val cmd = new Thread(new ClientReadMulticast(ms))
-
-      cs.start; cr.start; crd.start; cmd.start
-      cs.join; cr.join; crd.join; cmd.join
+      val scn = new Scanner(System.in)
+      println("Insert nickname:")
+      val nickname = scn.nextLine
+      val multicast = new MulticastSocketRead(nickname)
+      val datagram = new DatagramSocketRead
+      val tcp = new TCPSocketRead
+      val send = new ClientSend(nickname, tcp.socket, datagram.socket, multicast.socket)
+      val tasks: List[Thread] = List(new Thread(tcp), new Thread(datagram), new Thread(multicast), new Thread(send))
+      tasks.foreach(_.start)
+      tasks.foreach(_.join)
     } catch {
-      case x: java.net.ConnectException =>
-        println("Connection to server is closed")
-    } finally {
-      if(s != null) s.close
-      if(ds != null) ds.close
-      if(ms != null) ms.close
+      case x: Exception => x.printStackTrace()
     }
   }
 }
