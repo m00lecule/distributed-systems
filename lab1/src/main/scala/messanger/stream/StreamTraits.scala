@@ -7,17 +7,11 @@ trait StreamObjectOperations extends AutoCloseable {
 
   val socket: Socket
 
-  def writeObject(message: AnyRef) = {
-    val output = new ObjectOutputStream(socket.getOutputStream)
-    output.writeObject(message)
-  }
+  def writeObject(message: AnyRef) = new ObjectOutputStream(socket.getOutputStream).writeObject(message)
 
   def readObjectAndSender = (readObject, socket)
 
-  def readObject = {
-    val input = new ObjectInputStream(socket.getInputStream)
-    input.readObject()
-  }
+  def readObject = new ObjectInputStream(socket.getInputStream).readObject
 
   override def close = socket.close
 }

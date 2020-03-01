@@ -1,13 +1,13 @@
 package messanger
 
-import messanger.messages.{LogoutMessage, Message}
+import messanger.messages.{ASCIIArtMessage, LogoutMessage, Message, MessageRef}
 
 trait Processable[A] extends Runnable {
   var isRunning = true;
 
   def readObjectAndSender: (AnyRef, A)
 
-  def processMessage(message: Message, sender: A): Unit
+  def processMessage(message: MessageRef, sender: A): Unit
 
   def processLogout(sender: A): Unit
 
@@ -25,7 +25,7 @@ trait Processable[A] extends Runnable {
   def processMessages: Unit = {
     val (received, sender) = readObjectAndSender
     received match {
-      case mess: Message =>
+      case mess: MessageRef =>
         processMessage(mess, sender)
       case mess: LogoutMessage =>
         processLogout(sender)

@@ -1,3 +1,3 @@
 package messanger.messages
 
-case class Message(val sender: String, val message: String)
+case class Message(override val sender: String, override val message: String) extends MessageRef

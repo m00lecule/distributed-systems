@@ -1,6 +1,7 @@
 package messanger
 
-import messanger.messages.Message
+import art.ASCIIArtGenerator
+import messanger.messages.{ASCIIArtMessage, Message}
 
 trait Displayable extends Runnable {
 
@@ -10,11 +11,15 @@ trait Displayable extends Runnable {
 
   def close: Unit
 
+  val generator = new ASCIIArtGenerator
+
   final def displayObject = {
     val received = readObject
     received match {
       case Message(nick, message) =>
         display(nick, message)
+      case ASCIIArtMessage(nick, message) =>
+        display(nick, generator.printTextArt(message, ASCIIArtGenerator.ART_SIZE_MEDIUM))
     }
   }
 
