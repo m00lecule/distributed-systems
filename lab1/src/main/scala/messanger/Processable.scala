@@ -27,9 +27,11 @@ trait Processable[A] extends Runnable {
     received match {
       case mess: MessageRef =>
         processMessage(mess, sender)
-      case mess: LogoutMessage =>
+      case _ : LogoutMessage =>
         processLogout(sender)
         isRunning = false
+      case _ =>
+        println("Unknown message")
     }
 
   }

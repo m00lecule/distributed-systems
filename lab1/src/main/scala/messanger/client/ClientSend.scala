@@ -6,14 +6,14 @@ import java.util.Scanner
 
 import art.ASCIIArtGenerator
 import messanger.Server
-import messanger.messages.{ASCIIArtMessage, Message, MessageRef}
+import messanger.messages.{ASCIIArtMessage, LogoutMessage, Message, MessageRef}
 
 class ClientSend(val nickname: String, val socket: Socket, val datagramSocket: DatagramSocket, val multicastSocket: MulticastSocket) extends Thread {
   processInput("U hello packet")
 
   val generator = new ASCIIArtGenerator()
 
-  private def sendUsingSocket(message: MessageRef, socket: DatagramSocket, ip: InetAddress, port: Int): Unit = {
+  private def sendUsingSocket(message: AnyRef, socket: DatagramSocket, ip: InetAddress, port: Int): Unit = {
     val byteOut = new ByteArrayOutputStream
     new ObjectOutputStream(byteOut).writeObject(message)
     socket.send(new DatagramPacket(byteOut.toByteArray, byteOut.toByteArray.length, ip, port))
@@ -36,7 +36,17 @@ class ClientSend(val nickname: String, val socket: Socket, val datagramSocket: D
 
   override def run {
     val scn = new Scanner(System.in)
-    while (true)
-      processInput(scn.nextLine)
+    try {
+      while (true)
+        processInput(scn.nextLine)
+    }catch {
+      case x: Exception => logOut
+    }
+  }
+
+  def logOut(): Unit = {
+    sendUsingSocket(LogoutMessage(), datagramSocket, Server.address, Server.port)
+    val output = new ObjectOutputStream(socket.getOutputStream)
+    output.writeObject(LogoutMessage())
   }
 }

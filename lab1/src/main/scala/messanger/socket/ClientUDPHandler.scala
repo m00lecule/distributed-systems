@@ -9,7 +9,10 @@ import messanger.messages.MessageRef
 class ClientUDPHandler(override val socket: DatagramSocket) extends DatagramObjectOperations[DatagramSocket] with Processable[(Int, InetAddress)] {
   var registeredClients: scala.collection.mutable.Set[(Int, InetAddress)] = scala.collection.mutable.Set()
 
-  override def processLogout(sender: (Int, InetAddress)): Unit = registeredClients -= sender
+  override def processLogout(sender: (Int, InetAddress)): Unit = {
+    registeredClients -= sender
+    println(registeredClients)
+  };
 
   override def processMessage(message: MessageRef, sender: (Int, InetAddress)): Unit = {
     registeredClients += sender

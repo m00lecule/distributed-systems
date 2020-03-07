@@ -7,13 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-/**
- * ASCII Art Generator in Java.
- * Prints a given text as an ASCII text art on the console.
- * This code is licensed under - CC Attribution CC BY 4.0.
- * @author www.quickprogrammingtips.com
- *
- */
 public class ASCIIArtGenerator {
 
     public static final int ART_SIZE_SMALL = 12;
@@ -38,28 +31,6 @@ public class ASCIIArtGenerator {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        ASCIIArtGenerator artGen = new ASCIIArtGenerator();
-
-        System.out.println();
-        artGen.printTextArt("Hello", ASCIIArtGenerator.ART_SIZE_MEDIUM);
-        System.out.println();
-
-        System.out.println();
-        artGen.printTextArt("Love is life!", ASCIIArtGenerator.ART_SIZE_SMALL, ASCIIArtFont.ART_FONT_MONO,"@");
-        System.out.println();
-
-    }
-
-    /**
-     * Prints ASCII art for the specified text. For size, you can use predefined sizes or a custom size.
-     * Usage - printTextArt("Hi",30,ASCIIArtFont.ART_FONT_SERIF,"@");
-     * @param artText
-     * @param textHeight - Use a predefined size or a custom type
-     * @param fontType - Use one of the available fonts
-     * @param artSymbol - Specify the character for printing the ascii art
-     * @throws Exception
-     */
     private String printTextArt(String artText, int textHeight, ASCIIArtFont fontType, String artSymbol) throws Exception {
         String fontName = fontType.getValue();
         int imageWidth = findImageWidth(textHeight, artText, fontName);
@@ -84,24 +55,11 @@ public class ASCIIArtGenerator {
         return art;
     }
 
-    /**
-     * Convenience method for printing ascii text art.
-     * Font default - Dialog,  Art symbol default - *
-     * @param artText
-     * @param textHeight
-     * @throws Exception
-     */
     public String printTextArt(String artText, int textHeight) throws Exception {
         return printTextArt(artText, textHeight, ASCIIArtFont.ART_FONT_DIALOG, DEFAULT_ART_SYMBOL);
     }
 
-    /**
-     * Using the Current font and current art text find the width of the full image
-     * @param textHeight
-     * @param artText
-     * @param fontName
-     * @return
-     */
+
     private int findImageWidth(int textHeight, String artText, String fontName) {
         BufferedImage im = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics g = im.getGraphics();
@@ -109,12 +67,7 @@ public class ASCIIArtGenerator {
         return g.getFontMetrics().stringWidth(artText);
     }
 
-    /**
-     * Find where the text baseline should be drawn so that the characters are within image
-     * @param g
-     * @param font
-     * @return
-     */
+
     private int getBaselinePosition(Graphics g, Font font) {
         FontMetrics metrics = g.getFontMetrics(font);
         int y = metrics.getAscent() - metrics.getDescent();

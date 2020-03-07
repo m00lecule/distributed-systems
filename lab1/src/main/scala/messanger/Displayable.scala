@@ -20,6 +20,8 @@ trait Displayable extends Runnable {
         display(nick, message)
       case ASCIIArtMessage(nick, message) =>
         display(nick, generator.printTextArt(message, ASCIIArtGenerator.ART_SIZE_MEDIUM))
+      case _ =>
+        println("Dont know how to display this message")
     }
   }
 
