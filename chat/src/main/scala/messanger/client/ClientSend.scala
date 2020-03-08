@@ -40,7 +40,7 @@ class ClientSend(val nickname: String, val socket: Socket, val datagramSocket: D
       while (true)
         processInput(scn.nextLine)
     }catch {
-      case x: Exception => logOut
+      case x: Exception => logOut; socket.close; multicastSocket.close; datagramSocket.close;
     }
   }
 

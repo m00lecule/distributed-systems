@@ -10,6 +10,7 @@ class ClientTCPHandler(override val socket: Socket, val server: Server) extends 
   override def processMessage(message: MessageRef, sender: Socket): Unit = server.clientsTCP.stream().filter(!_.equals(this)).forEach(_.writeObject(message))
 
   override def processLogout(sender: Socket) = {
+    isRunning = false
     server.clientsTCP.remove(this)
     println(server.clientsTCP)
   }

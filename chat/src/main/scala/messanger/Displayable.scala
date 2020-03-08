@@ -30,7 +30,7 @@ trait Displayable extends Runnable {
       while (true)
         displayObject
     } catch {
-      case e: Exception => e.printStackTrace; close
+      case e: Exception => close
     }
   }
 }
