@@ -24,6 +24,15 @@ Supported Curriencies:
 - NZD
 - PLN
 
+## Typical usage
+1. Step one - pick currencies
+    
+    ![img](images/1.png)
+2. Output
+    
+    ![img](images/2.png)
+3. Go back do step one
+
 ## /convert endpoint
 
 Service publishes information also in json format. GET request requires those parameters:
