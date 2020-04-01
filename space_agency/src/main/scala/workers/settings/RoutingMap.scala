@@ -1,4 +1,4 @@
-package workers.representation
+package workers.settings
 
 case class Prefix(prefix: String)
 
