@@ -1,7 +1,9 @@
 package workers
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import com.rabbitmq.client.{Connection, DeliverCallback, Delivery}
-import workers.settings.{Exchange, Prefix, Settings}
+import workers.settings.{Exchange, Message, Prefix}
 
 trait Mailbox {
 
@@ -19,10 +21,27 @@ trait Mailbox {
     }
   }
   }
-
   val deliverCallback: DeliverCallback = (consumerTag: String, delivery: Delivery) => {
-    val mes = new String(delivery.getBody, Settings.encoding)
-    println(" [x] Received '" + mes + "'")
+    val mes = deserialise[Message](delivery.getBody)
+    printMes("MAILBOX", mes)
   }
   channel.basicConsume(queueName, true, deliverCallback, (_: String) => {})
+
+  def serialise(value: Any): Array[Byte] = {
+    val stream: ByteArrayOutputStream = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(stream)
+    oos.writeObject(value)
+    oos.close()
+    stream.toByteArray
+  }
+
+  def deserialise[A](bytes: Array[Byte]): A = {
+    val ois = new ObjectInputStream(new ByteArrayInputStream(bytes))
+    val value: A = ois.readObject.asInstanceOf[A]
+    ois.close()
+    value
+  }
+
+  protected def printMes(topic: String, msg: Message) = println("[" + topic + "] " + msg.toString + "\t")
+
 }
