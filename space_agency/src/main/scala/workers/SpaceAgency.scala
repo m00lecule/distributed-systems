@@ -12,9 +12,9 @@ class SpaceAgency(override val connection: Connection, val exchange: String, ove
   private val channel = connection.createChannel()
   channel.exchangeDeclare(exchange, "topic")
 
-  def publishOffer(QUEUE_NAME: String, msg: String): Unit = {
-    val message = Message(topic = QUEUE_NAME, message = msg, sender = queueName.replaceFirst(SpaceAgency.imqPrefix, SpaceAgency.agencyPrefix), id = outsourceOrders.incrementAndGet)
-    channel.basicPublish(Settings.productionLine.name, QUEUE_NAME, MessageProperties.PERSISTENT_TEXT_PLAIN, serialise(message))
+  def publishOffer(topic: String, msg: String): Unit = {
+    val message = Message(topic = topic, message = msg, sender = queueName.replaceFirst(SpaceAgency.imqPrefix, SpaceAgency.agencyPrefix), id = outsourceOrders.incrementAndGet)
+    channel.basicPublish(Settings.productionLine.name, topic, MessageProperties.PERSISTENT_TEXT_PLAIN, serialize(message))
   }
 }
 

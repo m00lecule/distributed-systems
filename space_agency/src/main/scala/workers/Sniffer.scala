@@ -22,7 +22,7 @@ class Sniffer(override val connection: Connection, val exchange: Exchange, overr
   def carriedBroadcast(msg: String) = publishOffer(Carrier.carrierPrefix, message = Message(sender = "Sniffer", topic = "SPAM TO " + SpaceAgency.agencyPrefix, message = msg, id = spamId.getAndIncrement))
 
   private def publishOffer(QUEUE_NAME: String, message: Message): Unit = {
-    channel.basicPublish(Settings.communicationLine.name, QUEUE_NAME, MessageProperties.PERSISTENT_TEXT_PLAIN, serialise(message))
+    channel.basicPublish(Settings.communicationLine.name, QUEUE_NAME, MessageProperties.PERSISTENT_TEXT_PLAIN, serialize(message))
   }
 }
 
