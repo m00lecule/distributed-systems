@@ -59,12 +59,6 @@ const cancelStream = (topic) => {
   cancelStream[topic].cancel();
 };
 
-/**
- * Run the getFeature demo. Calls getFeature with a point known to have a
- * feature and a point known not to have a feature.
- * @param {function} callback Called when this demo is complete
- */
-
 function subscribeTopic(timestamp, topic) {
   const topicObj = { topic, timestamp };
 
