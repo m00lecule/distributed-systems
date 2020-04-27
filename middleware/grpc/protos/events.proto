@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package server;
+
+service Server {
+
+  rpc AddEvent(Event) returns (Response) {}
+
+  rpc SubscribeTopic(Subscribction) returns (stream EventWrapper) {}
+
+  rpc GetTopics(Empty) returns (TopicList) {}
+}
+
+message Response {
+  int32 code = 1;
+}
+
+message Empty {}
+
+message TopicList {
+  repeated string topic = 1;
+}
+
+message Organizer {
+  string firstname = 1;
+  string lastname = 2;
+  int32 age = 3;
+}
+
+message Descripction {
+  enum State {
+    SCHEDULED = 0;
+    DISSMISSED = 1;
+    PENDING = 2;
+  }
+  repeated Organizer organizers = 1;
+  State state = 2; 
+}
+
+message Location {
+  string street = 1;
+  string city = 2;
+  int32 flat = 3;
+  int32 block = 4;
+}
+
+message Event {
+  string name = 1;
+  Descripction desc = 2;
+  Location location = 3;
+  repeated string topic = 4;
+}
+
+message Subscribction {
+  string topic = 1;
+  int32 timestamp = 2;
+}
+
+message EventWrapper {
+  int32 timestamp = 1;
+  Event event = 2;
+}

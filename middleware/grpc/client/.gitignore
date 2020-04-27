@@ -1,0 +1,4 @@
+../../.vscode/*
+ice/.idea/*
+node_modules/*
+../server/grpc/*
