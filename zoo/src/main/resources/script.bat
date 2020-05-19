@@ -4,5 +4,5 @@ SET /A "index = 1"
 :while
 echo %index%
 SET /A "index = index + 1"
-timeout /t 10 /nobreak > nul
+PING 1.1.1.1 -n 10 -w 30000 >NUL
 goto :while

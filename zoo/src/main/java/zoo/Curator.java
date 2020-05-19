@@ -76,6 +76,8 @@ public class Curator {
                         if (DEBUG && znodePath.equals(PATH))
                             killChild();
 
+                        printTree();
+
                         nodes.remove(znodePath);
                         break;
                     }
