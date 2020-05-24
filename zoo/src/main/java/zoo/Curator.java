@@ -15,7 +15,7 @@ import org.apache.curator.utils.ZKPaths;
 public class Curator {
     private static final String PATH = "/z";
     private static final String ROOT = "/";
-    private static final String EXEC = "src/main/resources/script.bat";
+    private static final String EXEC = "C:\\Program Files\\PuTTY\\putty.exe";
     private static final Set<String> nodes = new HashSet<>();
     private static Process child = null;
     private static boolean DEBUG = true;
@@ -51,7 +51,7 @@ public class Curator {
                                 + znodeName);
                         nodes.add(znodePath);
 
-                        printTree();
+                        printCount();
 
                         if (DEBUG && znodePath.equals(PATH))
                             startChild(EXEC);
@@ -76,9 +76,8 @@ public class Curator {
                         if (DEBUG && znodePath.equals(PATH))
                             killChild();
 
-                        printTree();
-
                         nodes.remove(znodePath);
+                        printCount();
                         break;
                     }
                     default:
@@ -160,6 +159,13 @@ public class Curator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static public void printCount() {
+        int count = nodes.size();
+        if(count >= 1)
+            count -=1;
+        System.out.println("Children: " + count);
     }
 
     static public void printTree() {
