@@ -5,8 +5,10 @@ import akka.actor.{Actor, ActorRef, Props}
 import scala.language.postfixOps
 import scala.concurrent.duration._
 
-class HandlerActor(val server: ActorRef, val shopId: Int, val Id:Int) extends Actor {
+class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor {
+
   import context.dispatcher
+
   val random = new scala.util.Random
   val start = 100
   val end = 500
@@ -24,11 +26,11 @@ class HandlerActor(val server: ActorRef, val shopId: Int, val Id:Int) extends Ac
     }
   }
 
-  private def log(str: String ){
+  private def log(str: String) {
     context.system.log.info(s"[ShopHandler $Id at $shopId] $str")
   }
 }
 
 object HandlerActor {
-  def apply(server: ActorRef, shopId:Int, Id:Int): Props = Props(new HandlerActor(server, shopId, Id))
+  def apply(server: ActorRef, shopId: Int, Id: Int): Props = Props(new HandlerActor(server, shopId, Id))
 }

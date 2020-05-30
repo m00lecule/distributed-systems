@@ -19,7 +19,7 @@ class ClientActor(val server: ActorRef) extends Actor {
     case Query(str) => server ! ClientRequest(str);
   }
 
-  private def log(str: String ){
+  private def log(str: String) {
     context.system.log.info(s"[Client $Id] $str")
   }
 }
@@ -27,7 +27,7 @@ class ClientActor(val server: ActorRef) extends Actor {
 object ClientActor {
   var ID = 0;
 
-  def getID() = ClientActor.synchronized{
+  def getID() = ClientActor.synchronized {
     ID += 1
     ID
   }

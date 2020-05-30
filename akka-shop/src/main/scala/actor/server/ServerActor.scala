@@ -29,7 +29,7 @@ class ServerActor(val shopsCount: Int) extends Actor {
 
     case ServerTimeout(id) => {
       val (value, name, sender) = requests.get(id);
-      sender ! ClientResponse(name, value ,counter = None)
+      sender ! ClientResponse(name, value, counter = None)
       requests.remove(id)
     }
 

@@ -33,19 +33,19 @@ object WebServer {
 
     val route: Route =
       concat(
-      pathPrefix("price") {
-        concat(
-          path(Segment) { name =>
-            concat(
-              get {
-                implicit val timeout: Timeout = 5.seconds
-                val bids: Future[ClientResponse] = (server ? ClientRequest(name)).mapTo[ClientResponse]
-                complete(bids)
-              },
+        pathPrefix("price") {
+          concat(
+            path(Segment) { name =>
+              concat(
+                get {
+                  implicit val timeout: Timeout = 5.seconds
+                  val bids: Future[ClientResponse] = (server ? ClientRequest(name)).mapTo[ClientResponse]
+                  complete(bids)
+                },
 
-            )
-          })
-      },
+              )
+            })
+        },
         pathPrefix("search") {
           concat(
             path(Segment) { name =>
