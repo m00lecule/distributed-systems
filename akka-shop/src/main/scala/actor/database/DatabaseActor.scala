@@ -1,17 +1,17 @@
-package Actors.Database
+package actor.database
 
 
 import java.sql.DriverManager
 
-import Actors.Database.SQLiteJDBC.{c, stmt}
-import Messages.{ClientResponse, ServerCountResponse, ServerRequest}
+import actor.database.SQLiteJDBC.{c, stmt}
+import message.{ClientResponse, ServerCountResponse, ServerRequest}
 import akka.actor.{Actor, ActorRef}
 
 class DatabaseActor extends Actor {
 
   initDatabase
 
-  val workers: List[ActorRef] = List.tabulate(DatabaseActor.pool)(n => context.actorOf(DatabaseHandlerActor(context.parent), s"$n"));
+  val workers: List[ActorRef] = List.tabulate(DatabaseActor.pool)(n => context.actorOf(DatabaseHandlerActor(context.parent, n), s"$n"));
 
   def initDatabase = {
     try {
@@ -30,8 +30,14 @@ class DatabaseActor extends Actor {
   }
 
   def receive = {
-    case sr @ ServerRequest(name, _)  =>
-     workers(name.hashCode.abs % DatabaseActor.pool) ! sr
+    case sr @ ServerRequest(_, name)  =>
+      val workerId = name.hashCode.abs % DatabaseActor.pool
+      workers(workerId) ! sr
+      log(s"Received query for $name, forwarded it to worker ${workerId}")
+  }
+
+  private def log(str: String ){
+    context.system.log.info(s"[DatabaseActor] $str")
   }
 }
 

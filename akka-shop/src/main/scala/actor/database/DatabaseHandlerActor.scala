@@ -1,13 +1,16 @@
-package Actors.Database
+package actor.database
 
 
 import java.sql.DriverManager
 
-import Actors.Database.SQLiteJDBC.{c, stmt}
-import Messages.{ClientResponse, ServerCountResponse, ServerRequest}
+import actor.database.SQLiteJDBC.{c, stmt}
+import message.{ServerCountResponse, ServerRequest}
 import akka.actor.{Actor, ActorRef, Props}
 
-class DatabaseHandlerActor(val server: ActorRef) extends Actor {
+class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor {
+
+  log(s"Initialized")
+
   def create(name: String) = {
     try {
       Class.forName(DatabaseActor.driver)
@@ -63,21 +66,29 @@ class DatabaseHandlerActor(val server: ActorRef) extends Actor {
 
   def receive = {
     case ServerRequest(id, name) =>
+
+      log(s"Received query for $name Id: $id")
+
       val count = getCount(name)
 
       count match {
         case Some(count) => {
           server ! ServerCountResponse(id=id, count=count)
           increment(name, count + 1)
+          log(s"Responded for existing registry $name count: $count")
         }
         case _ =>
           server ! ServerCountResponse(id=id, count=1)
+          log(s"Created registry for $name with count 1")
           create(name)
       }
   }
 
+  private def log(str: String ){
+    context.system.log.info(s"[DatabaseHandler $Id] $str")
+  }
 }
 
 object DatabaseHandlerActor {
-  def apply(server: ActorRef): Props = Props(new DatabaseHandlerActor(server))
+  def apply(server: ActorRef, Id: Int): Props = Props(new DatabaseHandlerActor(server, Id))
 }

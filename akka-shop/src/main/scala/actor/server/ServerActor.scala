@@ -1,9 +1,9 @@
-package Actors.Server
+package actor.server
 
 import java.util
 
-import Actors.Shop.ShopActor
-import Messages._
+import actor.shop.ShopActor
+import message._
 import akka.actor.{Actor, ActorRef, Props}
 import scala.language.postfixOps
 
@@ -14,7 +14,7 @@ class ServerActor(val shopsCount: Int) extends Actor {
   import context.dispatcher
 
   val threads = 10
-  val shops: List[ActorRef] = List.tabulate(shopsCount)(_ => context.actorOf(ShopActor(threads)));
+  val shops: List[ActorRef] = List.tabulate(shopsCount)(n => context.actorOf(ShopActor(threads, n)));
   var id = 0
   val requests = new util.HashMap[Int, (Option[Float], String, ActorRef)]();
 
@@ -29,12 +29,7 @@ class ServerActor(val shopsCount: Int) extends Actor {
 
     case ServerTimeout(id) => {
       val (value, name, sender) = requests.get(id);
-      var response: String = null;
-      value match {
-        case Some(price) => response = s"$name price: $price"
-        case _ => response = "No results"
-      }
-      sender ! ClientResponse(response, counter = None)
+      sender ! ClientResponse(name, value ,counter = None)
       requests.remove(id)
     }
 

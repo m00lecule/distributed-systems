@@ -1,9 +1,9 @@
-package Actors.Server
+package actor.server
 
 import java.util
-import Actors.Database.DatabaseActor
-import Actors.Shop.ShopActor
-import Messages.{ClientRequest, ClientResponse, ServerCountResponse, ServerRequest, ServerResponse, ServerTimeout}
+import actor.database.DatabaseActor
+import actor.shop.ShopActor
+import message.{ClientRequest, ClientResponse, ServerCountResponse, ServerRequest, ServerResponse, ServerTimeout}
 import akka.actor.{Actor, ActorRef, Props}
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -13,7 +13,7 @@ class ServerActor2(val shopsCount: Int) extends Actor {
   import context.dispatcher
 
   val threads = 10
-  val shops: List[ActorRef] = List.tabulate(shopsCount)(_ => context.actorOf(ShopActor(threads)));
+  val shops: List[ActorRef] = List.tabulate(shopsCount)(n => context.actorOf(ShopActor(threads, n)));
 
   val database: ActorRef = context.actorOf(Props(new DatabaseActor));
   var id = 0
@@ -36,18 +36,13 @@ class ServerActor2(val shopsCount: Int) extends Actor {
 
     case ServerTimeout(id) => {
       val (value, name, sender) = requests.get(id);
-      var response: String = null;
-      value match {
-        case Some(price) => response = s"$name price: $price"
-        case _ => response = "No results"
-      }
 
       var counter: Option[Int] = None;
-      if(countMap.containsKey(id)){
+      if (countMap.containsKey(id)) {
         counter = Some(countMap.get(id))
       }
 
-      sender ! ClientResponse(response, counter)
+      sender ! ClientResponse(name, value, counter)
       requests.remove(id)
     }
 
