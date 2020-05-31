@@ -34,15 +34,15 @@ class ServerActor(val shopsCount: Int) extends ServerAbstract {
     }
   }
 
-  override def processHandlerResponse(id: Int, name: String, price: Float) = {
+  def processHandlerResponse(id: Int, name: String, price: Float) = {
     if (requests.containsKey(id)) {
       val (r_value, r_name, r_sender) = requests.get(id);
       r_value match {
         case Some(p) if p.compareTo(price) > 0 =>
-          sender ! ClientResponse(name, Some(price), counter = None)
+          r_sender ! ClientResponse(name, Some(price), counter = None)
           requests.remove(id)
-        case value@Some(_) =>
-          sender ! ClientResponse(name, value, counter = None)
+        case Some(value) =>
+          r_sender ! ClientResponse(name, Some(value), counter = None)
           requests.remove(id)
         case _ => requests.put(id, (Some(price), r_name, r_sender))
       }
