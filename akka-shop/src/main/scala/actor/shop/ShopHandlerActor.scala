@@ -2,10 +2,11 @@ package actor.shop
 
 import actor.logger.TLogger
 import akka.actor.{Actor, ActorRef, Props}
-import message.ServerResponse
+import message.{ServerRequest, ServerResponse}
+
 import scala.language.postfixOps
 
-class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor with TLogger {
+class ShopHandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor with TLogger {
 
   override val prefix = s"ShopHandler $Id at $shopId";
 
@@ -18,7 +19,7 @@ class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends A
   log(s"Initialized with delay $delay and price $price")
 
   def receive = {
-    case id: Int => {
+    case ServerRequest(id, _) => {
       log(s"Received query ID: $id")
       Thread.sleep(delay)
       server ! ServerResponse(id = id, price = price, name = "")
@@ -27,6 +28,6 @@ class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends A
   }
 }
 
-object HandlerActor {
-  def apply(server: ActorRef, shopId: Int, Id: Int): Props = Props(new HandlerActor(server, shopId, Id))
+object ShopHandlerActor {
+  def apply(server: ActorRef, shopId: Int, Id: Int): Props = Props(new ShopHandlerActor(server, shopId, Id))
 }
