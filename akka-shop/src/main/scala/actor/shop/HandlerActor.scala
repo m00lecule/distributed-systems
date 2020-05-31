@@ -1,9 +1,8 @@
 package actor.shop
 
 import actor.logger.TLogger
-import message.ServerResponse
 import akka.actor.{Actor, ActorRef, Props}
-
+import message.ServerResponse
 import scala.language.postfixOps
 
 class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor with TLogger {

@@ -5,7 +5,6 @@ import message.{ClientRequest, ServerResponse, ServerTimeout}
 
 abstract class ServerAbstract extends Actor{
 
-
   override def receive = {
 
     case ClientRequest(name) => processClientRequest(name, sender())
