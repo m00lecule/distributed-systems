@@ -17,7 +17,7 @@ abstract class ServerAbstract extends Actor{
 
   def processClientRequest(str: String, client: ActorRef)
 
-  def respondToClientRequest(i: Int)
+  def respondToClientRequest(id: Int, counter: Option[Int] = None)
 
   def processHandlerResponse(i: Int, str: String, fl: Float)
 }

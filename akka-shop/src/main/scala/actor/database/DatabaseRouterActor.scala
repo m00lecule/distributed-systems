@@ -3,17 +3,17 @@ package actor.database
 
 import java.sql.DriverManager
 
-import actor.logger.TLogger
+import actor.router.TRouterActor
 import message.ServerRequest
-import akka.actor.{Actor, ActorRef}
+import akka.actor.ActorRef
 
-class DatabaseRouterActor extends Actor with TLogger {
+class DatabaseRouterActor extends TRouterActor {
 
   override val prefix = "DatabaseActor"
 
   initDatabase
 
-  val workers: List[ActorRef] = List.tabulate(DatabaseRouterActor.pool)(n => context.actorOf(DatabaseHandlerActor(context.parent, n), s"$n"));
+  override val workers: List[ActorRef] = List.tabulate(DatabaseRouterActor.pool)(n => context.actorOf(DatabaseHandlerActor(context.parent, n), s"$n"));
 
   def initDatabase = {
     try {
@@ -31,12 +31,7 @@ class DatabaseRouterActor extends Actor with TLogger {
     }
   }
 
-  def receive = {
-    case sr@ServerRequest(_, name) =>
-      val workerId = name.hashCode.abs % DatabaseRouterActor.pool
-      workers(workerId) ! sr
-      log(s"Received query for $name, forwarded it to worker ${workerId}")
-  }
+  override def forwardToHandler(request: ServerRequest): Int = request.name.hashCode.abs % DatabaseRouterActor.pool
 }
 
 object DatabaseRouterActor {

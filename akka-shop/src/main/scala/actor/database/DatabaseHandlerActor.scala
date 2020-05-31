@@ -74,9 +74,9 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor with
 
       count match {
         case Some(count) => {
-          server ! ServerCountResponse(id = id, count = count)
+          server ! ServerCountResponse(id, count + 1)
           increment(name, count + 1)
-          log(s"Responded for existing registry $name count: $count")
+          log(s"Responded for existing registry $name count: ${count + 1}")
         }
         case _ =>
           server ! ServerCountResponse(id = id, count = 1)

@@ -1,6 +1,6 @@
 package http
 
-import akka.actor.{ActorRef}
+import akka.actor.ActorRef
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Route

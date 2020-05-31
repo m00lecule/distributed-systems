@@ -26,10 +26,10 @@ class ServerActor(val shopsCount: Int) extends ServerAbstract {
     id += 1
   }
 
-  override def respondToClientRequest(id: Int) = {
+  override def respondToClientRequest(id: Int, counter: Option[Int] = None) = {
     if (requests.containsKey(id)) {
       val (value, name, sender) = requests.get(id);
-      sender ! ClientResponse(name, value, counter = None)
+      sender ! ClientResponse(name, value, counter)
       requests.remove(id)
     }
   }
