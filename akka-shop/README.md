@@ -14,6 +14,8 @@ W zadaniu 3 została dołożona funkcjonalność odpytywania o opinie serwisu __
 ## Sekwencyjny Diagram Komunikacji
 ![Whole system](img/sequence.png)
 
+W przypadku, gdy serwer otrzyma wszystkie odpowiedzi przed upłwem limitu czasu generowana jest odpowiedź do klienta. Dzięki zachowaniu tego mechanizmu klient czeka conajwyżej 300ms na odpowiedź ze strony serwera.
+
 
 ## Atomowość operacji na bazie danych
 Atomowość operacji jest zapewniona poprzez umiejętne kierowanie przepływem zapytań z DatabaseActor'a do DBHandle. Id zostało zastąpione **hashem** nazwy produktu, w ten sposób zapytania o konkretny produkt zawsze będą kierowane do tego samego Handlera. Natomiast sekwencyjne przetwarzanie tych wiadomości ma zapewnić atomowość operacji na krotce.
