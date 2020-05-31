@@ -14,6 +14,7 @@ W zadaniu 3 została dołożona funkcjonalność odpytywania o opinie serwisu __
 ## Sekwencyjny Diagram Komunikacji
 ![Whole system](img/sequence.png)
 
+
 ## Atomowość operacji na bazie danych
 Atomowość operacji jest zapewniona poprzez umiejętne kierowanie przepływem zapytań z DatabaseActor'a do DBHandle. Id zostało zastąpione **hashem** nazwy produktu, w ten sposób zapytania o konkretny produkt zawsze będą kierowane do tego samego Handlera. Natomiast sekwencyjne przetwarzanie tych wiadomości ma zapewnić atomowość operacji na krotce.
 

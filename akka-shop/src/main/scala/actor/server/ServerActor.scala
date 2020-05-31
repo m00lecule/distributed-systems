@@ -4,12 +4,12 @@ import java.util
 
 import actor.shop.ShopActor
 import message._
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{ActorRef, Props}
 import scala.language.postfixOps
 
 import scala.concurrent.duration._
 
-class ServerActor(val shopsCount: Int) extends Actor {
+class ServerActor(val shopsCount: Int) extends ServerAbstract {
 
   import context.dispatcher
 
@@ -18,29 +18,35 @@ class ServerActor(val shopsCount: Int) extends Actor {
   var id = 0
   val requests = new util.HashMap[Int, (Option[Float], String, ActorRef)]();
 
-  def receive = {
-    case ClientRequest(name) => {
-      requests.put(id, (None, name, sender()))
-      val scheduledRequest = ServerRequest(id, name)
-      shops.foreach(s => s ! scheduledRequest)
-      context.system.scheduler.scheduleOnce(300 milliseconds, self, ServerTimeout(id))
-      id += 1
-    }
+  override def processClientRequest(name: String, client: ActorRef) = {
+    requests.put(id, (None, name, client))
+    val scheduledRequest = ServerRequest(id, name)
+    shops.foreach(s => s ! scheduledRequest)
+    context.system.scheduler.scheduleOnce(300 milliseconds, self, ServerTimeout(id))
+    id += 1
+  }
 
-    case ServerTimeout(id) => {
+  override def respondToClientRequest(id: Int) = {
+    if (requests.containsKey(id)) {
       val (value, name, sender) = requests.get(id);
       sender ! ClientResponse(name, value, counter = None)
       requests.remove(id)
     }
+  }
 
-    case ServerResponse(id, name, price) =>
-      if (requests.containsKey(id)) {
-        val (r_value, r_name, r_sender) = requests.get(id);
-        r_value match {
-          case Some(p) if p.compareTo(price) > 0 => requests.put(id, (Some(price), r_name, r_sender))
-          case _ => requests.put(id, (Some(price), r_name, r_sender))
-        }
+  override def processHandlerResponse(id: Int, name: String, price: Float) = {
+    if (requests.containsKey(id)) {
+      val (r_value, r_name, r_sender) = requests.get(id);
+      r_value match {
+        case Some(p) if p.compareTo(price) > 0 =>
+          sender ! ClientResponse(name, Some(price), counter = None)
+          requests.remove(id)
+        case value@Some(_) =>
+          sender ! ClientResponse(name, value, counter = None)
+          requests.remove(id)
+        case _ => requests.put(id, (Some(price), r_name, r_sender))
       }
+    }
   }
 }
 

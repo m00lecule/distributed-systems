@@ -1,13 +1,15 @@
 package actor.search
 
-import actor.database.DatabaseHandlerActor
-import akka.actor.{Actor, ActorRef, Props}
-import message.{ServerRequest, ServerResponse, ServerSearchResponse}
+import actor.logger.TLogger
+import akka.actor.{Actor, Props}
+import message.{ServerRequest, ServerSearchResponse}
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
-import actor.search.SearchHandlerActor.root
 
-class SearchHandlerActor(val Id: Int) extends Actor {
+class SearchHandlerActor(val Id: Int) extends Actor with TLogger {
+
+  override val prefix = s"SearchHandlerActor $Id";
+
   override def receive: Receive = {
     case ServerRequest(id, name) => {
       log(s"Received search task id: $id for $name")
@@ -41,10 +43,6 @@ class SearchHandlerActor(val Id: Int) extends Actor {
   private def getProsFromURL(url: String) = {
     val doc = Jsoup.connect(url).get();
     doc.getElementsByClass(SearchHandlerActor.prosClass).text();
-  }
-
-  private def log(str: String) {
-    context.system.log.info(s"[SearchHandlerActor $Id] $str")
   }
 }
 

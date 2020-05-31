@@ -1,13 +1,14 @@
 package actor.shop
 
+import actor.logger.TLogger
 import message.ServerResponse
 import akka.actor.{Actor, ActorRef, Props}
+
 import scala.language.postfixOps
-import scala.concurrent.duration._
 
-class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor {
+class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends Actor with TLogger {
 
-  import context.dispatcher
+  override val prefix = s"ShopHandler $Id at $shopId";
 
   val random = new scala.util.Random
   val start = 100
@@ -24,10 +25,6 @@ class HandlerActor(val server: ActorRef, val shopId: Int, val Id: Int) extends A
       server ! ServerResponse(id = id, price = price, name = "")
       log(s"Responded to client query ID: $id with price $price")
     }
-  }
-
-  private def log(str: String) {
-    context.system.log.info(s"[ShopHandler $Id at $shopId] $str")
   }
 }
 

@@ -1,13 +1,14 @@
 package actor.database
 
-
 import java.sql.DriverManager
 
-import actor.database.SQLiteJDBC.{c, stmt}
+import actor.logger.TLogger
 import message.{ServerCountResponse, ServerRequest}
 import akka.actor.{Actor, ActorRef, Props}
 
-class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor {
+class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor with TLogger {
+
+  override val prefix = s"DatabaseHandler $Id"
 
   log(s"Initialized")
 
@@ -53,7 +54,7 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor {
     try {
       Class.forName(DatabaseActor.driver)
       val c = DriverManager.getConnection(DatabaseActor.connectionPath)
-      stmt = c.createStatement
+      val stmt = c.createStatement
       stmt.executeUpdate(s"UPDATE QUERIES SET COUNT = $previous WHERE name = '$name';")
       stmt.close
       c.close
@@ -82,10 +83,6 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor {
           log(s"Created registry for $name with count 1")
           create(name)
       }
-  }
-
-  private def log(str: String) {
-    context.system.log.info(s"[DatabaseHandler $Id] $str")
   }
 }
 

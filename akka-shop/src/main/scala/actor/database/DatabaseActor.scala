@@ -3,11 +3,13 @@ package actor.database
 
 import java.sql.DriverManager
 
-import actor.database.SQLiteJDBC.{c, stmt}
-import message.{ClientResponse, ServerCountResponse, ServerRequest}
+import actor.logger.TLogger
+import message.ServerRequest
 import akka.actor.{Actor, ActorRef}
 
-class DatabaseActor extends Actor {
+class DatabaseActor extends Actor with TLogger {
+
+  override val prefix = "DatabaseActor"
 
   initDatabase
 
@@ -34,10 +36,6 @@ class DatabaseActor extends Actor {
       val workerId = name.hashCode.abs % DatabaseActor.pool
       workers(workerId) ! sr
       log(s"Received query for $name, forwarded it to worker ${workerId}")
-  }
-
-  private def log(str: String) {
-    context.system.log.info(s"[DatabaseActor] $str")
   }
 }
 

@@ -2,14 +2,19 @@ package actor.search
 
 import java.util
 
+import actor.logger.TLogger
 import akka.actor.{Actor, ActorRef, Props}
 import message.{ClientRequest, ClientSearchResponse, ServerRequest, ServerSearchResponse}
 
-class SearchLoadBalancerActor extends Actor {
+class SearchLoadBalancerActor extends Actor with TLogger {
+
+  override val prefix = "SearchLoadBalancer"
   val count = SearchLoadBalancerActor.workers
   val workers: List[ActorRef] = List.tabulate(count)(n => context.actorOf(Props(new SearchHandlerActor(n)), s"$n"));
   val requests = new util.HashMap[Int, (String, ActorRef)]()
   var id = 0;
+
+
 
   def receive = {
     case ClientRequest(name) => {
@@ -23,10 +28,6 @@ class SearchLoadBalancerActor extends Actor {
       val (name, sender) = requests.get(id);
       sender ! ClientSearchResponse(name, pros)
       log(s"Responded for $name search with $pros")
-  }
-
-  private def log(str: String) {
-    context.system.log.info(s"[SearchLoadBalancer] $str")
   }
 }
 
