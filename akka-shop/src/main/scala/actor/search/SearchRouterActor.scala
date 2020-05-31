@@ -6,10 +6,10 @@ import actor.logger.TLogger
 import akka.actor.{Actor, ActorRef, Props}
 import message.{ClientRequest, ClientSearchResponse, ServerRequest, ServerSearchResponse}
 
-class SearchLoadBalancerActor extends Actor with TLogger {
+class SearchRouterActor extends Actor with TLogger {
 
   override val prefix = "SearchLoadBalancer"
-  val count = SearchLoadBalancerActor.workers
+  val count = SearchRouterActor.workers
   val workers: List[ActorRef] = List.tabulate(count)(n => context.actorOf(Props(new SearchHandlerActor(n)), s"$n"));
   val requests = new util.HashMap[Int, (String, ActorRef)]()
   var id = 0;
@@ -31,6 +31,6 @@ class SearchLoadBalancerActor extends Actor with TLogger {
   }
 }
 
-object SearchLoadBalancerActor {
+object SearchRouterActor {
   val workers = 10;
 }

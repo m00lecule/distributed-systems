@@ -2,7 +2,7 @@ package actor.server
 
 import java.util
 
-import actor.shop.ShopActor
+import actor.shop.ShopRouterActor
 import message._
 import akka.actor.{ActorRef, Props}
 import scala.language.postfixOps
@@ -14,7 +14,7 @@ class ServerActor(val shopsCount: Int) extends ServerAbstract {
   import context.dispatcher
 
   val threads = 10
-  val shops: List[ActorRef] = List.tabulate(shopsCount)(n => context.actorOf(ShopActor(threads, n)));
+  val shops: List[ActorRef] = List.tabulate(shopsCount)(n => context.actorOf(ShopRouterActor(threads, n)));
   var id = 0
   val requests = new util.HashMap[Int, (Option[Float], String, ActorRef)]();
 

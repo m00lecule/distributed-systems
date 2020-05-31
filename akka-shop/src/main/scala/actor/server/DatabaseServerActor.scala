@@ -1,7 +1,7 @@
 package actor.server
 
 import java.util
-import actor.database.DatabaseActor
+import actor.database.DatabaseRouterActor
 import message.{ClientResponse, ServerCountResponse, ServerRequest, ServerTimeout}
 import akka.actor.{ActorRef, Props}
 import scala.concurrent.duration._
@@ -11,7 +11,7 @@ class DatabaseServerActor(override val shopsCount: Int) extends ServerActor(shop
 
   import context.dispatcher
 
-  val database: ActorRef = context.actorOf(Props(new DatabaseActor));
+  val database: ActorRef = context.actorOf(Props(new DatabaseRouterActor));
   val countMap = new util.HashMap[Int, Int]();
 
   override def receive = {

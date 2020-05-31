@@ -14,8 +14,8 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor with
 
   def create(name: String) = {
     try {
-      Class.forName(DatabaseActor.driver)
-      val c = DriverManager.getConnection(DatabaseActor.connectionPath)
+      Class.forName(DatabaseRouterActor.driver)
+      val c = DriverManager.getConnection(DatabaseRouterActor.connectionPath)
       val stmt = c.createStatement
       val sql = s"INSERT INTO QUERIES (NAME) VALUES ('$name');"
       stmt.executeUpdate(sql)
@@ -31,8 +31,8 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor with
   def getCount(name: String): Option[Int] = {
     var count: Option[Int] = None;
     try {
-      Class.forName(DatabaseActor.driver)
-      val c = DriverManager.getConnection(DatabaseActor.connectionPath)
+      Class.forName(DatabaseRouterActor.driver)
+      val c = DriverManager.getConnection(DatabaseRouterActor.connectionPath)
       c.setAutoCommit(false)
       val stmt = c.createStatement
       val rs = stmt.executeQuery(s"SELECT COUNT FROM QUERIES WHERE NAME IS '$name';")
@@ -52,8 +52,8 @@ class DatabaseHandlerActor(val server: ActorRef, val Id: Int) extends Actor with
 
   def increment(name: String, previous: Int): Unit = {
     try {
-      Class.forName(DatabaseActor.driver)
-      val c = DriverManager.getConnection(DatabaseActor.connectionPath)
+      Class.forName(DatabaseRouterActor.driver)
+      val c = DriverManager.getConnection(DatabaseRouterActor.connectionPath)
       val stmt = c.createStatement
       stmt.executeUpdate(s"UPDATE QUERIES SET COUNT = $previous WHERE name = '$name';")
       stmt.close

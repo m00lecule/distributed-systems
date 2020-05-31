@@ -1,6 +1,6 @@
 package http
 
-import actor.search.SearchLoadBalancerActor
+import actor.search.SearchRouterActor
 import actor.server.ServerActor
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
@@ -16,7 +16,7 @@ object WebServer extends App {
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   val server = system.actorOf(ServerActor(2))
-  val search = system.actorOf(Props(new SearchLoadBalancerActor()))
+  val search = system.actorOf(Props(new SearchRouterActor()))
 
   val bindingFuture = Http().bindAndHandle(Routes(server, search), "localhost", 8080)
   println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")

@@ -3,7 +3,7 @@ package actor.shop
 import message.ServerRequest
 import akka.actor.{Actor, ActorRef, Props}
 
-class ShopActor(val count: Int, val Id: Int) extends Actor {
+class ShopRouterActor(val count: Int, val Id: Int) extends Actor {
 
   val server = context.parent;
   val workers: List[ActorRef] = List.tabulate(count)(n => context.actorOf(HandlerActor(server, Id, n), s"$n"));
@@ -15,7 +15,7 @@ class ShopActor(val count: Int, val Id: Int) extends Actor {
   }
 }
 
-object ShopActor {
+object ShopRouterActor {
   private var ID = 0;
 
   def getID() = HandlerActor.synchronized {
@@ -23,5 +23,5 @@ object ShopActor {
     ID
   }
 
-  def apply(count: Int, Id: Int): Props = Props(new ShopActor(count, Id))
+  def apply(count: Int, Id: Int): Props = Props(new ShopRouterActor(count, Id))
 }
